@@ -44,3 +44,10 @@ pub struct FormComputedProps<Values, Status> {
     /** The initial status of the form */
     pub initial_status: Status,
 }
+
+pub struct FormHelpers;
+
+impl FormHelpers {
+    pub fn set_status() {}
+    pub fn set_errors() {}
+}

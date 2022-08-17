@@ -1,5 +1,7 @@
-pub mod manger;
+pub mod form_reducer;
+pub mod former;
 pub mod types;
+pub mod utils;
 
 // export * from './Formik';
 // export * from './Field';
