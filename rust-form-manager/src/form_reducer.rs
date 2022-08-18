@@ -1,68 +1,76 @@
 use std::rc::Rc;
 use yew::prelude::*;
 
+use crate::types::FormState;
+
+pub struct FieldValue {
+    pub field: String,
+    pub value: Option<String>,
+}
+
 pub enum FormReducerAction<Values> {
     SetValues(Values),
-    SetTouched,
-    SetErrors,
-    SetStatus,
     SetIsSubmitting(bool),
-    SetIsValidating,
-    SetFieldValue,
-    SetFieldTouch,
-    SetFieldError,
-    ResetForm,
-    SetFormikState,
+    SetIsValidating(bool),
+    SetFieldValue(FieldValue),
+    SetFieldTouch(FieldValue),
+    SetFieldError(FieldValue),
+    SetTouched(Values),
+    SetErrors(Values),
+    SetStatus(Option<String>),
+    ResetForm(FormState<Values>),
+    SetFormikState(FormState<Values>),
     SubmitAttempt,
     SubmitFailure,
     SubmitSuccess,
 }
 
-// struct State<Values> {
-//     values: Values,
-//     errors: Values,
-//     touched: Values,
-//     status: Values,
-//     is_submitting: bool,
-//     is_validating: bool,
-//     submit_count: bool,
-// }
-
-struct FormReducerState<Values> {
-    state: Values,
+pub struct FormReducerState<T> {
+    pub values: T,
+    pub errors: String,
+    pub touched: String,
+    pub status: String,
+    pub is_submitting: bool,
+    pub is_validating: bool,
+    pub submit_count: bool,
 }
 
-// impl<Values> Default for FormReducerState<Values> {
-//     fn default() -> Self {
-//         Self { state: 10 }
-//     }
-// }
+fn action_returns<T>(prev_state: Rc<FormReducerState<T>>) -> Rc<FormReducerState<T>> {
+    // TODO: Action Need to implement for all Cases..
+    return prev_state;
+}
 
-impl<Values> Reducible for FormReducerState<Values>
-where
-    Values: Copy,
-{
-    type Action = FormReducerAction<Values>;
+impl<T> Reducible for FormReducerState<T> {
+    type Action = FormReducerAction<T>;
 
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
         let next_ctr = match action {
-            FormReducerAction::SetValues(_value) => self.state,
-            FormReducerAction::SetTouched => self.state,
-            FormReducerAction::SetErrors => self.state,
-            FormReducerAction::SetStatus => self.state,
-            FormReducerAction::SetIsSubmitting(_value) => self.state,
-            FormReducerAction::SetIsValidating => self.state,
-            FormReducerAction::SetFieldValue => self.state,
-            FormReducerAction::SetFieldTouch => self.state,
-            FormReducerAction::SetFieldError => self.state,
-            FormReducerAction::ResetForm => self.state,
-            FormReducerAction::SetFormikState => self.state,
-            FormReducerAction::SubmitAttempt => self.state,
-            FormReducerAction::SubmitFailure => self.state,
-            FormReducerAction::SubmitSuccess => self.state,
+            FormReducerAction::SetValues(_payload) => action_returns(self),
+            FormReducerAction::SetTouched(_payload) => action_returns(self),
+            FormReducerAction::SetErrors(_payload) => action_returns(self),
+            FormReducerAction::SetStatus(_payload) => action_returns(self),
+            FormReducerAction::SetIsSubmitting(_payload) => action_returns(self),
+            FormReducerAction::SetIsValidating(_payload) => action_returns(self),
+            FormReducerAction::SetFieldValue(_payload) => action_returns(self),
+            FormReducerAction::SetFieldTouch(_payload) => action_returns(self),
+            FormReducerAction::SetFieldError(_payload) => action_returns(self),
+            FormReducerAction::ResetForm(_payload) => action_returns(self),
+            FormReducerAction::SetFormikState(_payload) => action_returns(self),
+            FormReducerAction::SubmitAttempt => action_returns(self),
+            FormReducerAction::SubmitFailure => action_returns(self),
+            FormReducerAction::SubmitSuccess => action_returns(self),
+            // FormReducerAction::SubmitSuccess => {
+            //     let state = {
+            //         let data = Rc::new(RefCell::new(self));
+            //         let temp = data.borrow_mut();
+            //         temp.is_submitting = false;
+            //         temp
+            //     };
+            //     state.deref_mut()
+            // }
         };
 
-        Self { state: next_ctr }.into()
+        next_ctr.into()
     }
 }
 
