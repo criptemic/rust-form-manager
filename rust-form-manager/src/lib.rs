@@ -1,5 +1,5 @@
-pub mod form_reducer;
 pub mod former;
+pub mod reducer;
 pub mod types;
 pub mod utils;
 

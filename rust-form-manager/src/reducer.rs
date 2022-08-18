@@ -25,23 +25,25 @@ pub enum FormReducerAction<Values> {
     SubmitSuccess,
 }
 
-pub struct FormReducerState<T> {
-    pub values: T,
-    pub errors: String,
-    pub touched: String,
-    pub status: String,
+pub struct FormReducerState<Values> {
+    pub values: Values,
+    pub errors: Values,
+    pub touched: Values,
+    pub status: Option<String>,
     pub is_submitting: bool,
     pub is_validating: bool,
     pub submit_count: bool,
 }
 
-fn action_returns<T>(prev_state: Rc<FormReducerState<T>>) -> Rc<FormReducerState<T>> {
+fn action_returns<Values>(
+    prev_state: Rc<FormReducerState<Values>>,
+) -> Rc<FormReducerState<Values>> {
     // TODO: Action Need to implement for all Cases..
     return prev_state;
 }
 
-impl<T> Reducible for FormReducerState<T> {
-    type Action = FormReducerAction<T>;
+impl<Values> Reducible for FormReducerState<Values> {
+    type Action = FormReducerAction<Values>;
 
     fn reduce(self: Rc<Self>, action: Self::Action) -> Rc<Self> {
         let next_ctr = match action {
