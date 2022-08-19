@@ -1,4 +1,4 @@
-pub mod former;
+pub mod form;
 pub mod reducer;
 pub mod types;
 pub mod utils;
