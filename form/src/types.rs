@@ -18,7 +18,7 @@ pub struct FormState<Values> {
     /** Top level status state, in case you need it */
     pub status: Option<String>,
     /** Number of times user tried to submit the form */
-    pub submit_count: f64,
+    pub submit_count: i32,
 }
 
 /**

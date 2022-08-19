@@ -1,8 +1,12 @@
+use std::fmt::Debug;
 use yew::prelude::*;
-
-pub struct UseForm<Values> {
+#[derive(Debug)]
+pub struct UseForm<Values>
+where
+    Values: Debug,
+{
     pub initial_values: Values,
-    // pub validate_on_change: bool,
+    pub validate_on_change: bool,
     // pub validate_on_blur: bool,
     // pub validate_on_mount: bool,
     // pub is_initial_valid: bool,
@@ -10,34 +14,47 @@ pub struct UseForm<Values> {
     //   onSubmit,
 }
 
-impl<Values> UseForm<Values> {
+impl<Values> UseForm<Values>
+where
+    Values: Debug,
+{
     pub fn get_initial_values(self) -> Values {
         self.initial_values
     }
 
-    pub fn on_submit() {}
+    // pub fn on_submit() {}
 }
 
-pub fn use_form<Values: 'static>(props: UseForm<Values>) {
+pub fn use_form<T: 'static + Debug>(props: UseForm<T>) {
     let initial_values = use_ref(|| props.get_initial_values());
-    let initial_errors = use_ref(|| "");
-    let initial_status = use_ref(|| "");
-    let is_mounted = use_ref(|| false);
-}
+    // let hello = 5;
+    log::info!("Update: {:?}", initial_values);
 
-pub struct FormField {
+    // let initial_errors = use_ref(|| "");
+    // let initial_status = use_ref(|| "");
+    // let is_mounted = use_ref(|| false);
+}
+#[derive(Debug)]
+pub struct FormFields {
     pub name: String,
     pub age: i32,
 }
 
 #[function_component(Form)]
-fn form() -> Html {
+pub fn form() -> Html {
     let props = UseForm {
-        initial_values: FormField {
+        initial_values: FormFields {
             name: "".to_string(),
             age: 0,
         },
+        validate_on_change: true,
     };
+
     let _state = use_form(props);
-    html!()
+
+    html!(
+        <div>
+        {"Form In yew"}
+        </div>
+    )
 }

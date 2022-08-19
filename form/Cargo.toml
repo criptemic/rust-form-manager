@@ -1,5 +1,5 @@
 [package]
-name = "rust-form-manager"
+name = "form"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,3 +7,5 @@ edition = "2021"
 
 [dependencies]
 yew = "0.19.3"
+wasm-logger = "0.2.0"
+log = "0.4.6"
