@@ -1,60 +1,120 @@
-use std::fmt::Debug;
+use std::rc::Rc;
 use yew::prelude::*;
-#[derive(Debug)]
-pub struct UseForm<Values>
-where
-    Values: Debug,
-{
+
+use crate::reducer::{FieldValue, FormReducerAction, FormReducerState};
+
+pub struct FormProps<Values> {
     pub initial_values: Values,
     pub validate_on_change: bool,
-    // pub validate_on_blur: bool,
-    // pub validate_on_mount: bool,
-    // pub is_initial_valid: bool,
-    // pub enable_initialize: bool,
-    //   onSubmit,
+    pub validate_on_blur: bool,
+    pub validate_on_mount: bool,
+    pub is_initial_valid: bool,
+    pub enable_initialize: bool,
+    pub on_submit: Callback<Values>,
 }
 
-impl<Values> UseForm<Values>
-where
-    Values: Debug,
-{
-    pub fn get_initial_values(self) -> Values {
-        self.initial_values
+pub struct FormState<Values> {
+    pub inner: UseReducerHandle<FormReducerState<Values>>,
+    // pub handle_change: Callback<Event>,
+}
+
+fn validated(value: Option<bool>) {
+    match value {
+        Some(true) => {}
+        Some(false) => {}
+        None => {}
+    }
+}
+
+impl<Values> FormState<Values> {
+    pub fn set_status(&self, payload: Option<String>) {
+        self.inner.dispatch(FormReducerAction::SetStatus(payload))
+    }
+    pub fn set_submitting(&self, is_submitting: bool) {
+        self.inner
+            .dispatch(FormReducerAction::SetIsSubmitting(is_submitting));
     }
 
-    // pub fn on_submit() {}
+    pub fn set_validating(&self, is_validating: bool) {
+        self.inner
+            .dispatch(FormReducerAction::SetIsValidating(is_validating));
+    }
+
+    pub fn set_values(&self, values: Values, should_validate: Option<bool>) {
+        self.inner.dispatch(FormReducerAction::SetValues(values));
+        validated(should_validate);
+    }
+
+    pub fn set_errors(&self, values: Values) {
+        self.inner.dispatch(FormReducerAction::SetErrors(values));
+    }
+
+    pub fn set_touched(&self, values: Values, should_validate: Option<bool>) {
+        self.inner.dispatch(FormReducerAction::SetTouched(values));
+        validated(should_validate);
+    }
+
+    pub fn set_field_value(
+        &self,
+        field: String,
+        value: Option<String>,
+        should_validate: Option<bool>,
+    ) {
+        self.inner
+            .dispatch(FormReducerAction::SetFieldValue(FieldValue {
+                field,
+                value,
+            }));
+        validated(should_validate);
+    }
+
+    pub fn set_field_error(&self, field: String, value: Option<String>) {
+        self.inner
+            .dispatch(FormReducerAction::SetFieldError(FieldValue {
+                field,
+                value,
+            }));
+    }
+
+    pub fn set_field_touched(
+        &self,
+        field: String,
+        value: Option<String>,
+        should_validate: Option<bool>,
+    ) {
+        self.inner
+            .dispatch(FormReducerAction::SetFieldTouch(FieldValue {
+                field,
+                value,
+            }));
+        validated(should_validate);
+    }
+
+    pub fn reset_form(&self, new_values: FormState<Values>) {
+        self.inner
+            .dispatch(FormReducerAction::SetFormState(new_values));
+    }
 }
 
-pub fn use_form<T: 'static + Debug>(props: UseForm<T>) {
-    let initial_values = use_ref(|| props.get_initial_values());
-    // let hello = 5;
-    log::info!("Update: {:?}", initial_values);
+pub fn use_form<Values: 'static>(props: FormProps<Values>) -> FormState<Values> {
+    let values = Rc::new(props.initial_values);
+    let errors = values.clone();
+    let touched = values.clone();
 
-    // let initial_errors = use_ref(|| "");
-    // let initial_status = use_ref(|| "");
-    // let is_mounted = use_ref(|| false);
-}
-#[derive(Debug)]
-pub struct FormFields {
-    pub name: String,
-    pub age: i32,
-}
+    let inner = use_reducer(move || FormReducerState {
+        values,
+        errors,
+        touched,
+        is_submitting: false,
+        is_validating: false,
+        submit_count: 0,
+        status: None,
+    });
 
-#[function_component(Form)]
-pub fn form() -> Html {
-    let props = UseForm {
-        initial_values: FormFields {
-            name: "".to_string(),
-            age: 0,
-        },
-        validate_on_change: true,
-    };
+    // let handle_change = {};
 
-    let _state = use_form(props);
-
-    html!(
-        <div>
-        {"Form In yew"}
-        </div>
-    )
+    FormState {
+        inner,
+        // handle_change,
+    }
 }

@@ -1,7 +1,7 @@
 use std::rc::Rc;
 use yew::prelude::*;
 
-use crate::types::FormState;
+use crate::form::FormState;
 
 pub struct FieldValue {
     pub field: String,
@@ -9,30 +9,29 @@ pub struct FieldValue {
 }
 
 pub enum FormReducerAction<Values> {
-    SetValues(Values),
+    SetStatus(Option<String>),
     SetIsSubmitting(bool),
     SetIsValidating(bool),
+    SetValues(Values),
+    SetTouched(Values),
+    SetErrors(Values),
     SetFieldValue(FieldValue),
     SetFieldTouch(FieldValue),
     SetFieldError(FieldValue),
-    SetTouched(Values),
-    SetErrors(Values),
-    SetStatus(Option<String>),
-    ResetForm(FormState<Values>),
-    SetFormikState(FormState<Values>),
+    SetFormState(FormState<Values>),
     SubmitAttempt,
     SubmitFailure,
     SubmitSuccess,
 }
 
 pub struct FormReducerState<Values> {
-    pub values: Values,
-    pub errors: Values,
-    pub touched: Values,
+    pub values: Rc<Values>,
+    pub errors: Rc<Values>,
+    pub touched: Rc<Values>,
     pub status: Option<String>,
     pub is_submitting: bool,
     pub is_validating: bool,
-    pub submit_count: bool,
+    pub submit_count: i32,
 }
 
 fn action_returns<Values>(
@@ -56,35 +55,11 @@ impl<Values> Reducible for FormReducerState<Values> {
             FormReducerAction::SetFieldValue(_payload) => action_returns(self),
             FormReducerAction::SetFieldTouch(_payload) => action_returns(self),
             FormReducerAction::SetFieldError(_payload) => action_returns(self),
-            FormReducerAction::ResetForm(_payload) => action_returns(self),
-            FormReducerAction::SetFormikState(_payload) => action_returns(self),
+            FormReducerAction::SetFormState(_payload) => action_returns(self),
             FormReducerAction::SubmitAttempt => action_returns(self),
             FormReducerAction::SubmitFailure => action_returns(self),
             FormReducerAction::SubmitSuccess => action_returns(self),
-            // FormReducerAction::SubmitSuccess => {
-            //     let state = {
-            //         let data = Rc::new(RefCell::new(self));
-            //         let temp = data.borrow_mut();
-            //         temp.is_submitting = false;
-            //         temp
-            //     };
-            //     state.deref_mut()
-            // }
         };
-
         next_ctr.into()
     }
 }
-
-// #[function_component(UseReducer)]
-// fn reducer() -> Html {
-//     let state = use_reducer();
-//     let on_handle_reducer = {
-//         let state = state.clone();
-//         Callback::from(move |event: MouseEvent| {
-//             state.dispatch(FormReducerAction::SetValues("hello".to_string()))
-//         });
-//     };
-
-//     html!()
-// }
